@@ -1,0 +1,25 @@
+{
+  "name": "bun-formdata-repro",
+  "version": "1.0.0",
+  "description": "Reproduction of Bun FormData boundary parsing bug (GitHub Issue #2644)",
+  "scripts": {
+    "server": "bun reproduce-2644-hono.js",
+    "test": "bun test-aggressive-2644.js",
+    "original": "bun reproduce-2644-original.js",
+    "cloning": "bun reproduce-2644-cloning.js",
+    "boundary": "bun reproduce-2644-boundary.js",
+    "client": "bun test-client-2644.js"
+  },
+  "dependencies": {
+    "hono": "^4.9.4"
+  },
+  "keywords": [
+    "bun",
+    "formdata",
+    "bug",
+    "reproduction",
+    "hono"
+  ],
+  "author": "Claude Code",
+  "license": "MIT"
+}
