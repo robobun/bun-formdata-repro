@@ -2,24 +2,32 @@
 
 ## Summary
 
-This repository reproduces the FormData boundary parsing issue in Bun when using frameworks. **The issue is confirmed to still exist** as of August 2024.
+This repository reproduces **both** the original "FormData missing final boundary" error AND the framework integration issues reported in GitHub issue #2644. 
 
 **GitHub Issue**: https://github.com/oven-sh/bun/issues/2644
 
 ## ✅ Successfully Reproduced
 
-### Hono Framework - 100% Failure Rate
+### 1. The Original "Missing Final Boundary" Error
 
-When using Hono v4.9.4, **all FormData requests fail** with:
+**✅ REPRODUCED** - The exact error from the GitHub issue:
+```
+FormData parse error missing final boundary
+```
+
+**Triggers**: Malformed FormData with:
+- Missing final `--boundary--` marker
+- Truncated boundary strings
+- Empty body with boundary header
+- Mismatched boundaries (header vs body)
+
+### 2. Hono Framework - Different Error
+
+When using Hono v4.9.4, a **different but related** error occurs:
 ```
 TypeError: undefined is not a function (near '...entry of iterable...')
       at fromEntries (native:7:20)
 ```
-
-### Key Finding
-
-- **✅ Direct `Bun.serve()`**: FormData parsing works perfectly (tested up to 100 concurrent requests)
-- **❌ Framework integration**: FormData parsing completely fails (100% error rate)
 
 ## Affected Frameworks
 
@@ -32,22 +40,17 @@ Based on GitHub issue comments:
 
 ## Quick Reproduction
 
-1. **Install dependencies**:
-   ```bash
-   bun install
-   ```
+### Option 1: Original "Missing Final Boundary" Error
+```bash
+bun create-malformed-boundary.js
+```
+**Expected**: Multiple "FormData parse error missing final boundary" errors
 
-2. **Start Hono server** (reproduces the bug):
-   ```bash
-   bun run server
-   ```
-
-3. **Run test** (in another terminal):
-   ```bash
-   bun run test
-   ```
-
-4. **Expected**: 100% failure rate with iterator errors.
+### Option 2: Framework Integration Issues
+1. **Install dependencies**: `bun install`
+2. **Start Hono server**: `bun run server`
+3. **Run test**: `bun run test`
+**Expected**: 100% failure rate with iterator errors
 
 ## Root Cause
 
@@ -55,12 +58,16 @@ The issue appears to be that `FormData.entries()` returns an invalid iterator wh
 
 ## Files
 
-- `reproduce-hono.js` - Hono server that demonstrates the bug
-- `test-aggressive.js` - Concurrent FormData test client
-- `reproduce-original.js` - Original issue reproduction attempt
-- `reproduce-cloning.js` - Request cloning/wrapping tests
-- `reproduce-boundary.js` - Boundary-focused tests  
-- `test-client.js` - Basic FormData tests
+### Primary Reproductions
+- `create-malformed-boundary.js` - **✅ Reproduces original "missing final boundary" error**
+- `reproduce-2644-hono.js` - Hono framework integration issues
+
+### Additional Tests  
+- `test-aggressive-2644.js` - Concurrent FormData test client
+- `reproduce-2644-original.js` - Original issue reproduction attempt
+- `reproduce-2644-cloning.js` - Request cloning/wrapping tests
+- `reproduce-2644-boundary.js` - Boundary-focused tests  
+- `test-client-2644.js` - Basic FormData tests
 
 ---
 

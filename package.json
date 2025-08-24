@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Reproduction of Bun FormData boundary parsing bug (GitHub Issue #2644)",
   "scripts": {
+    "boundary-error": "bun create-malformed-boundary.js",
     "server": "bun reproduce-2644-hono.js",
     "test": "bun test-aggressive-2644.js",
     "original": "bun reproduce-2644-original.js",
